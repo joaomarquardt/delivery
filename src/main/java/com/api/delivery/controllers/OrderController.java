@@ -1,6 +1,5 @@
 package com.api.delivery.controllers;
 
-import com.api.delivery.domain.Order;
 import com.api.delivery.dtos.requests.CreateOrderRequest;
 import com.api.delivery.dtos.requests.UpdateOrderStatusRequest;
 import com.api.delivery.dtos.responses.OrderResponse;

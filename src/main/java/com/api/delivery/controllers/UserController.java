@@ -1,6 +1,5 @@
 package com.api.delivery.controllers;
 
-import com.api.delivery.domain.User;
 import com.api.delivery.dtos.requests.CreateUserRequest;
 import com.api.delivery.dtos.requests.UpdateUserRequest;
 import com.api.delivery.dtos.responses.UserResponse;
