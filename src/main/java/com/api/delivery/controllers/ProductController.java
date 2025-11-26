@@ -1,6 +1,9 @@
 package com.api.delivery.controllers;
 
 import com.api.delivery.domain.Product;
+import com.api.delivery.dtos.requests.CreateProductRequest;
+import com.api.delivery.dtos.requests.UpdateProductRequest;
+import com.api.delivery.dtos.responses.ProductResponse;
 import com.api.delivery.services.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,26 +21,26 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> findAll() {
-        List<Product> products = productService.findAll();
+    public ResponseEntity<List<ProductResponse>> findAll() {
+        List<ProductResponse> products = productService.findAll();
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> findProductById(@PathVariable(value = "id") Long id) {
-        Product product = productService.findProductById(id);
+    public ResponseEntity<ProductResponse> findProductById(@PathVariable(value = "id") Long id) {
+        ProductResponse product = productService.findProductById(id);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product createdProduct = productService.createProduct(product);
+    public ResponseEntity<ProductResponse> createProduct(@RequestBody CreateProductRequest product) {
+        ProductResponse createdProduct = productService.createProduct(product);
         return new ResponseEntity<>(createdProduct, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable(value = "id") Long id, @RequestBody Product product) {
-        Product updatedProduct = productService.updateProduct(id, product);
+    public ResponseEntity<ProductResponse> updateProduct(@PathVariable(value = "id") Long id, @RequestBody UpdateProductRequest product) {
+        ProductResponse updatedProduct = productService.updateProduct(id, product);
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
 

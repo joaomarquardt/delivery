@@ -1,6 +1,9 @@
 package com.api.delivery.controllers;
 
 import com.api.delivery.domain.User;
+import com.api.delivery.dtos.requests.CreateUserRequest;
+import com.api.delivery.dtos.requests.UpdateUserRequest;
+import com.api.delivery.dtos.responses.UserResponse;
 import com.api.delivery.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,26 +21,26 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> findAll() {
-        List<User> users = userService.findAll();
+    public ResponseEntity<List<UserResponse>> findAll() {
+        List<UserResponse> users = userService.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> findUserById(@PathVariable(value = "id") Long id) {
-        User user = userService.findUserById(id);
+    public ResponseEntity<UserResponse> findUserById(@PathVariable(value = "id") Long id) {
+        UserResponse user = userService.findUserById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User createdUser = userService.createUser(user);
+    public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest user) {
+        UserResponse createdUser = userService.createUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable(value = "id") Long id, @RequestBody User user) {
-        User updatedUser = userService.updateUser(id, user);
+    public ResponseEntity<UserResponse> updateUser(@PathVariable(value = "id") Long id, @RequestBody UpdateUserRequest user) {
+        UserResponse updatedUser = userService.updateUser(id, user);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
