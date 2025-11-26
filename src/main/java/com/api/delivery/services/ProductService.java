@@ -38,9 +38,13 @@ public class ProductService {
         return productMapper.toProductResponse(product);
     }
 
+    public boolean existsByName(String name) {
+        return productRepository.existsByName(name);
+    }
+
     public ProductResponse createProduct(CreateProductRequest request) {
         ProductType productType = productTypeService.findProductTypeEntityById(request.productTypeId());
-        if (productTypeService.existsByName(request.name())) {
+        if (existsByName(request.name())) {
             throw new IllegalArgumentException("Product with name '" + request.name() + "' already exists!");
         }
         Product product = productMapper.toProductEntity(request);
@@ -50,8 +54,13 @@ public class ProductService {
     }
 
     public ProductResponse updateProduct(Long id, UpdateProductRequest request) {
+        ProductType productType = productTypeService.findProductTypeEntityById(request.productTypeId());
+        if (existsByName(request.name())) {
+            throw new IllegalArgumentException("Product with name '" + request.name() + "' already exists!");
+        }
         Product product = findProductEntityById(id);
         productMapper.updateProductFromRequest(request, product);
+        product.setProductType(productType);
         Product createdProduct = productRepository.save(product);
         return productMapper.toProductResponse(createdProduct);
     }
