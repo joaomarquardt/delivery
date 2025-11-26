@@ -1,6 +1,7 @@
 package com.api.delivery.services;
 
 import com.api.delivery.domain.Product;
+import com.api.delivery.domain.ProductType;
 import com.api.delivery.dtos.requests.CreateProductRequest;
 import com.api.delivery.dtos.requests.UpdateProductRequest;
 import com.api.delivery.dtos.responses.ProductResponse;
@@ -14,9 +15,11 @@ import java.util.List;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    private final ProductTypeService productTypeService;
     private final ProductMapper productMapper;
 
-    public ProductService(ProductRepository productRepository, ProductMapper productMapper) {
+    public ProductService(ProductRepository productRepository, ProductMapper productMapper, ProductTypeService productTypeService) {
+        this.productTypeService = productTypeService;
         this.productRepository = productRepository;
         this.productMapper = productMapper;
     }
@@ -36,7 +39,12 @@ public class ProductService {
     }
 
     public ProductResponse createProduct(CreateProductRequest request) {
+        ProductType productType = productTypeService.findProductTypeEntityById(request.productTypeId());
+        if (productTypeService.existsByName(request.name())) {
+            throw new IllegalArgumentException("Product with name '" + request.name() + "' already exists!");
+        }
         Product product = productMapper.toProductEntity(request);
+        product.setProductType(productType);
         Product createdProduct = productRepository.save(product);
         return productMapper.toProductResponse(createdProduct);
     }
