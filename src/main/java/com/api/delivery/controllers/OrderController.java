@@ -1,6 +1,9 @@
 package com.api.delivery.controllers;
 
 import com.api.delivery.domain.Order;
+import com.api.delivery.dtos.requests.CreateOrderRequest;
+import com.api.delivery.dtos.requests.UpdateOrderStatusRequest;
+import com.api.delivery.dtos.responses.OrderResponse;
 import com.api.delivery.services.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,26 +21,26 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Order>> findAll() {
-        List<Order> orders = orderService.findAll();
+    public ResponseEntity<List<OrderResponse>> findAll() {
+        List<OrderResponse> orders = orderService.findAll();
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Order> findOrderById(@PathVariable(value = "id") Long id) {
-        Order order = orderService.findOrderById(id);
+    public ResponseEntity<OrderResponse> findOrderById(@PathVariable(value = "id") Long id) {
+        OrderResponse order = orderService.findOrderById(id);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        Order createdOrder = orderService.createOrder(order);
+    public ResponseEntity<OrderResponse> createOrder(@RequestBody CreateOrderRequest order) {
+        OrderResponse createdOrder = orderService.createOrder(order);
         return new ResponseEntity<>(createdOrder, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Order> updateOrder(@PathVariable(value = "id") Long id, @RequestBody Order order) {
-        Order updatedOrder = orderService.updateOrder(id, order);
+    @PatchMapping("/{id}")
+    public ResponseEntity<OrderResponse> updateOrderStatus(@PathVariable(value = "id") Long id, @RequestBody UpdateOrderStatusRequest orderStatus) {
+        OrderResponse updatedOrder = orderService.updateOrderStatus(id, orderStatus);
         return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
     }
 
