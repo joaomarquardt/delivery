@@ -1,8 +1,10 @@
 package com.api.delivery.mappers;
 
 import com.api.delivery.domain.Order;
+import com.api.delivery.domain.OrderItem;
 import com.api.delivery.dtos.requests.CreateOrderRequest;
 import com.api.delivery.dtos.requests.UpdateOrderStatusRequest;
+import com.api.delivery.dtos.responses.OrderItemResponse;
 import com.api.delivery.dtos.responses.OrderResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -18,6 +20,9 @@ public interface OrderMapper {
     Order toOrderEntity(CreateOrderRequest request);
 
     OrderResponse toOrderResponse(Order order);
+
+    @Mapping(target = "productId", source = "product.id")
+    OrderItemResponse toOrderItemResponse(OrderItem item);
 
     List<OrderResponse> toOrderResponseList(List<Order> orders);
 
