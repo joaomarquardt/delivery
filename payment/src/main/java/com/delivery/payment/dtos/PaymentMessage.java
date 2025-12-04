@@ -4,7 +4,7 @@ import com.delivery.payment.domain.PaymentMethod;
 
 import java.math.BigDecimal;
 
-public record PaymentRequest(
+public record PaymentMessage(
         Long orderId,
         PaymentMethod paymentMethod,
         BigDecimal value,
