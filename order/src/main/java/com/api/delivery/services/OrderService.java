@@ -6,11 +6,14 @@ import com.api.delivery.domain.OrderStatus;
 import com.api.delivery.domain.Product;
 import com.api.delivery.dtos.requests.OrderItemRequest;
 import com.api.delivery.dtos.requests.CreateOrderRequest;
+import com.api.delivery.dtos.requests.OrderPaymentMessage;
 import com.api.delivery.dtos.requests.UpdateOrderStatusRequest;
 import com.api.delivery.dtos.responses.OrderResponse;
 import com.api.delivery.mappers.OrderMapper;
+import com.api.delivery.config.RabbitMQConfig;
 import com.api.delivery.repositories.OrderRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -24,11 +27,13 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final ProductService productService;
+    private RabbitTemplate rabbitTemplate;
 
-    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper, ProductService productService) {
+    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper, ProductService productService, RabbitTemplate rabbitTemplate) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.productService = productService;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     public List<OrderResponse> findAll() {
@@ -66,6 +71,18 @@ public class OrderService {
         }
         order.setItems(items);
         Order createdOrder = orderRepository.save(order);
+
+        OrderPaymentMessage paymentMessage = new OrderPaymentMessage(
+                createdOrder.getId(),
+                request.paymentMethod(),
+                totalValue,
+                request.cardToken()
+        );
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.ORDER_EXCHANGE,
+                RabbitMQConfig.ROUTING_KEY,
+                paymentMessage
+        );
         return orderMapper.toOrderResponse(createdOrder);
     }
 
