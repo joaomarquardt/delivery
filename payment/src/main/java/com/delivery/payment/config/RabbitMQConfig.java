@@ -32,6 +32,6 @@ public class RabbitMQConfig {
         return BindingBuilder
                 .bind(orderCreatedQueue)
                 .to(orderExchange)
-                .with("");
+                .with("order.created");
     }
 }
