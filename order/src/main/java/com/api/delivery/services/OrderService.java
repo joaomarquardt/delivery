@@ -11,6 +11,7 @@ import com.api.delivery.dtos.requests.UpdateOrderStatusRequest;
 import com.api.delivery.dtos.responses.OrderResponse;
 import com.api.delivery.mappers.OrderMapper;
 import com.api.delivery.config.RabbitMQConfig;
+import com.api.delivery.messaging.producers.OrderProducer;
 import com.api.delivery.repositories.OrderRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -27,13 +28,13 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final ProductService productService;
-    private RabbitTemplate rabbitTemplate;
+    private OrderProducer orderProducer;
 
-    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper, ProductService productService, RabbitTemplate rabbitTemplate) {
+    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper, ProductService productService, OrderProducer orderProducer) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
         this.productService = productService;
-        this.rabbitTemplate = rabbitTemplate;
+        this.orderProducer = orderProducer;
     }
 
     public List<OrderResponse> findAll() {
@@ -78,11 +79,7 @@ public class OrderService {
                 totalValue,
                 request.cardToken()
         );
-        rabbitTemplate.convertAndSend(
-                RabbitMQConfig.ORDER_EXCHANGE,
-                RabbitMQConfig.ROUTING_KEY,
-                paymentMessage
-        );
+        orderProducer.sendOrderCreatedMessage(paymentMessage);
         return orderMapper.toOrderResponse(createdOrder);
     }
 
