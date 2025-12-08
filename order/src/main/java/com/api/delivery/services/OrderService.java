@@ -26,7 +26,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final ProductService productService;
-    private OrderProducer orderProducer;
+    private final OrderProducer orderProducer;
 
     public OrderService(OrderRepository orderRepository, OrderMapper orderMapper, ProductService productService, OrderProducer orderProducer) {
         this.orderRepository = orderRepository;
@@ -74,6 +74,7 @@ public class OrderService {
         OrderPaymentMessage paymentMessage = new OrderPaymentMessage(
                 createdOrder.getId(),
                 request.paymentMethod(),
+                request.paymentChannel(),
                 totalValue,
                 request.cardToken()
         );

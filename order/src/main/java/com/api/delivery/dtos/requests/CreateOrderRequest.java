@@ -5,6 +5,7 @@ import java.util.List;
 public record CreateOrderRequest(
         List<OrderItemRequest> items,
         String paymentMethod,
+        String paymentChannel,
         String cardToken
 ) {
 
