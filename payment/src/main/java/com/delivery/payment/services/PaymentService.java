@@ -4,34 +4,71 @@ import com.delivery.payment.domain.Payment;
 import com.delivery.payment.domain.PaymentMethod;
 import com.delivery.payment.domain.PaymentStatus;
 import com.delivery.payment.dtos.PaymentRequest;
+import com.delivery.payment.enums.PaymentChannel;
+import com.delivery.payment.gateways.ExternalPaymentGateway;
+import com.delivery.payment.messaging.producer.PaymentProducer;
 import com.delivery.payment.repositories.PaymentRepository;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 public class PaymentService {
     private final PaymentRepository paymentRepository;
-    private final PaymentEventProducer paymentEventProducer;
+    private final ExternalPaymentGateway externalPaymentGateway;
+    private final PaymentProducer paymentProducer;
 
-    public PaymentService(PaymentRepository paymentRepository, PaymentEventProducer paymentEventProducer) {
+    public PaymentService(PaymentRepository paymentRepository, ExternalPaymentGateway externalPaymentGateway, PaymentProducer paymentProducer) {
         this.paymentRepository = paymentRepository;
-        this.paymentEventProducer = paymentEventProducer;
+        this.externalPaymentGateway = externalPaymentGateway;
+        this.paymentProducer = paymentProducer;
     }
 
-    public void processPayment(PaymentRequest paymentRequest) {
-        if (paymentRequest.paymentMethod() == null) {
-            throw new IllegalArgumentException("Payment method is required");
-        }
-        if (paymentRequest.paymentMethod() == PaymentMethod.CREDIT_CARD || paymentRequest.paymentMethod() == PaymentMethod.DEBIT_CARD) {
-            if (paymentRequest.cardData() == null) {
-                throw new IllegalArgumentException("Card data is required for card payments");
-            }
-        }
+    public void createPayment(PaymentRequest paymentRequest) {
+        validatePaymentRequest(paymentRequest);
         Payment payment = new Payment();
         payment.setOrderId(paymentRequest.orderId());
         payment.setPaymentMethod(paymentRequest.paymentMethod());
         payment.setValue(paymentRequest.value());
-        payment.setStatus(PaymentStatus.PENDING);
+        if (paymentRequest.paymentChannel() == PaymentChannel.ONLINE) {
+            PaymentStatus status = processOnlinePayment(paymentRequest.orderId(), paymentRequest.value(), paymentRequest.paymentMethod(), paymentRequest.cardToken());
+            payment.setStatus(status);
+        }
         paymentRepository.save(payment);
-        paymentEventProducer.publishPaymentProcessedEvent(payment);
+    }
+
+    public PaymentStatus processOnlinePayment(Long orderId, BigDecimal value, PaymentMethod paymentMethod, String cardToken) {
+        PaymentStatus status = externalPaymentGateway.makePayment(value, paymentMethod, cardToken);
+        paymentProducer.sendPaymentStatusMessage(orderId, status == PaymentStatus.APPROVED);
+        return status;
+    }
+
+    public void processAtDeliveryPayment(Long orderId) {
+        Payment payment = paymentRepository.findByOrderId(orderId).orElseThrow(() -> new IllegalArgumentException("Payment not found for order ID: " + orderId));
+        if (payment.getStatus() != PaymentStatus.PENDING) {
+            throw new IllegalArgumentException("Payment is not in a pending state for order ID: " + orderId);
+        }
+        payment.setStatus(PaymentStatus.APPROVED);
+        paymentRepository.save(payment);
+        paymentProducer.sendPaymentStatusMessage(orderId, true);
+    }
+
+    private void validatePaymentRequest(PaymentRequest paymentRequest) {
+        if (paymentRequest.paymentMethod() == null) {
+            throw new IllegalArgumentException("Payment method is required");
+        }
+        if (paymentRequest.paymentChannel() == null) {
+            throw new IllegalArgumentException("Payment channel is required");
+        }
+        if (paymentRequest.paymentMethod() == PaymentMethod.CASH && paymentRequest.paymentChannel() == PaymentChannel.ONLINE) {
+            throw new IllegalArgumentException("Cash payments cannot be processed online");
+        }
+        boolean isCard = paymentRequest.paymentMethod() == PaymentMethod.CREDIT_CARD || paymentRequest.paymentMethod() == PaymentMethod.DEBIT_CARD;
+        boolean isOnline = paymentRequest.paymentChannel() == PaymentChannel.ONLINE;
+        if (isCard && isOnline) {
+            if (paymentRequest.cardToken() == null || paymentRequest.cardToken().isEmpty()) {
+                throw new IllegalArgumentException("Card data is required for online card payments");
+            }
+        }
     }
 }
