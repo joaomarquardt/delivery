@@ -3,7 +3,6 @@ package com.delivery.payment.domain;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 
 @Entity
 @Table(name = "payments")
