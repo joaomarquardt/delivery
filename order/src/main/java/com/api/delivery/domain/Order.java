@@ -1,5 +1,6 @@
 package com.api.delivery.domain;
 
+import com.api.delivery.enums.OrderStatus;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;

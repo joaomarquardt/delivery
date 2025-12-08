@@ -1,6 +1,6 @@
 package com.delivery.payment.dtos;
 
-import com.delivery.payment.domain.PaymentMethod;
+import com.delivery.payment.enums.PaymentMethod;
 import com.delivery.payment.enums.PaymentChannel;
 
 import java.math.BigDecimal;

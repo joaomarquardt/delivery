@@ -1,4 +1,4 @@
-package com.api.delivery.domain;
+package com.api.delivery.enums;
 
 public enum OrderStatus {
     PENDING,

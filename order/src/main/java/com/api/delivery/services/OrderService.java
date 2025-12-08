@@ -2,7 +2,7 @@ package com.api.delivery.services;
 
 import com.api.delivery.domain.Order;
 import com.api.delivery.domain.OrderItem;
-import com.api.delivery.domain.OrderStatus;
+import com.api.delivery.enums.OrderStatus;
 import com.api.delivery.domain.Product;
 import com.api.delivery.dtos.requests.OrderItemRequest;
 import com.api.delivery.dtos.requests.CreateOrderRequest;
@@ -10,11 +10,9 @@ import com.api.delivery.dtos.requests.OrderPaymentMessage;
 import com.api.delivery.dtos.requests.UpdateOrderStatusRequest;
 import com.api.delivery.dtos.responses.OrderResponse;
 import com.api.delivery.mappers.OrderMapper;
-import com.api.delivery.config.RabbitMQConfig;
 import com.api.delivery.messaging.producers.OrderProducer;
 import com.api.delivery.repositories.OrderRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

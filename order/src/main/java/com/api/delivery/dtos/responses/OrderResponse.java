@@ -1,6 +1,6 @@
 package com.api.delivery.dtos.responses;
 
-import com.api.delivery.domain.OrderStatus;
+import com.api.delivery.enums.OrderStatus;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;

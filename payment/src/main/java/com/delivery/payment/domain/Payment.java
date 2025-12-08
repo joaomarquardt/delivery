@@ -1,5 +1,7 @@
 package com.delivery.payment.domain;
 
+import com.delivery.payment.enums.PaymentMethod;
+import com.delivery.payment.enums.PaymentStatus;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;

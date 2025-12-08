@@ -1,4 +1,4 @@
-package com.delivery.payment.domain;
+package com.delivery.payment.enums;
 
 public enum PaymentStatus {
     PENDING,

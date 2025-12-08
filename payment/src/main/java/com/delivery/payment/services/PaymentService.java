@@ -1,8 +1,8 @@
 package com.delivery.payment.services;
 
 import com.delivery.payment.domain.Payment;
-import com.delivery.payment.domain.PaymentMethod;
-import com.delivery.payment.domain.PaymentStatus;
+import com.delivery.payment.enums.PaymentMethod;
+import com.delivery.payment.enums.PaymentStatus;
 import com.delivery.payment.dtos.PaymentRequest;
 import com.delivery.payment.enums.PaymentChannel;
 import com.delivery.payment.gateways.ExternalPaymentGateway;

@@ -1,7 +1,7 @@
 package com.delivery.payment.gateways;
 
-import com.delivery.payment.domain.PaymentMethod;
-import com.delivery.payment.domain.PaymentStatus;
+import com.delivery.payment.enums.PaymentMethod;
+import com.delivery.payment.enums.PaymentStatus;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
