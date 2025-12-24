@@ -16,7 +16,7 @@ public class OrderProducer {
     public void sendOrderCreatedMessage(OrderPaymentMessage message) {
         rabbitTemplate.convertAndSend(
                 RabbitMQConfig.ORDER_EXCHANGE,
-                RabbitMQConfig.ROUTING_KEY,
+                RabbitMQConfig.ORDER_CREATED_ROUTING_KEY,
                 message);
     }
 }
