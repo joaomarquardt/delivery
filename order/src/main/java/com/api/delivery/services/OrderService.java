@@ -6,7 +6,8 @@ import com.api.delivery.enums.OrderStatus;
 import com.api.delivery.domain.Product;
 import com.api.delivery.dtos.requests.OrderItemRequest;
 import com.api.delivery.dtos.requests.CreateOrderRequest;
-import com.api.delivery.dtos.requests.OrderPaymentMessage;
+import com.api.delivery.enums.PaymentChannel;
+import com.api.delivery.messaging.dtos.OrderPaymentMessage;
 import com.api.delivery.dtos.requests.UpdateOrderStatusRequest;
 import com.api.delivery.dtos.responses.OrderResponse;
 import com.api.delivery.mappers.OrderMapper;
@@ -50,6 +51,9 @@ public class OrderService {
     }
 
     public OrderResponse createOrder(CreateOrderRequest request) {
+        if (request.paymentChannel() == PaymentChannel.ONLINE && (request.cardToken() == null || request.cardToken().isBlank())) {
+            throw new IllegalArgumentException("Card token is required for online card payments");
+        }
         BigDecimal totalValue = BigDecimal.valueOf(0);
         List<OrderItem> items = new ArrayList<>();
         for (OrderItemRequest itemRequest : request.items()) {
