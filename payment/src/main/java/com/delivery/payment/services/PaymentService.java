@@ -6,6 +6,8 @@ import com.delivery.payment.enums.PaymentStatus;
 import com.delivery.payment.dtos.PaymentRequest;
 import com.delivery.payment.enums.PaymentChannel;
 import com.delivery.payment.gateways.ExternalPaymentGateway;
+import com.delivery.payment.infra.exceptions.InvalidPaymentChannelException;
+import com.delivery.payment.infra.exceptions.InvalidPaymentMethodException;
 import com.delivery.payment.messaging.producer.PaymentProducer;
 import com.delivery.payment.repositories.PaymentRepository;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,6 @@ public class PaymentService {
     }
 
     public void createPayment(PaymentRequest paymentRequest) {
-        validatePaymentRequest(paymentRequest);
         Payment payment = new Payment();
         payment.setOrderId(paymentRequest.orderId());
         payment.setPaymentMethod(paymentRequest.paymentMethod());
@@ -53,12 +54,12 @@ public class PaymentService {
         paymentProducer.sendPaymentStatusMessage(orderId, true);
     }
 
-    private void validatePaymentRequest(PaymentRequest paymentRequest) {
+    public void validatePaymentRequest(PaymentRequest paymentRequest) {
         if (paymentRequest.paymentMethod() == null) {
-            throw new IllegalArgumentException("Payment method is required");
+            throw new InvalidPaymentMethodException("Payment method is required");
         }
         if (paymentRequest.paymentChannel() == null) {
-            throw new IllegalArgumentException("Payment channel is required");
+            throw new InvalidPaymentChannelException("Payment channel is required");
         }
         if (paymentRequest.paymentMethod() == PaymentMethod.CASH && paymentRequest.paymentChannel() == PaymentChannel.ONLINE) {
             throw new IllegalArgumentException("Cash payments cannot be processed online");
