@@ -8,15 +8,15 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    public static final String PAYMENT_STATUS_EXCHANGE = "payment.events.exchange";
-    public static final String ROUTING_KEY = "payment.events.status";
+    public static final String PAYMENT_EVENTS_EXCHANGE = "payment.events.exchange";
+
     public static final String ORDER_EXCHANGE = "order.exchange";
     public static final String ORDER_CREATED_QUEUE = "order.created.queue";
-
+    public static final String ORDER_CREATED_ROUTING_KEY = "order.created";
 
     @Bean
     public Exchange paymentExchange() {
-        return new FanoutExchange(PAYMENT_STATUS_EXCHANGE);
+        return new TopicExchange(PAYMENT_EVENTS_EXCHANGE);
     }
 
     @Bean
@@ -34,7 +34,7 @@ public class RabbitMQConfig {
         return BindingBuilder
                 .bind(orderCreatedQueue)
                 .to(orderExchange)
-                .with("order.created");
+                .with(ORDER_CREATED_ROUTING_KEY);
     }
 
     @Bean

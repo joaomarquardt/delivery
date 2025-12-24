@@ -9,9 +9,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
     public static final String ORDER_EXCHANGE = "order.exchange";
-    public static final String ROUTING_KEY = "order.created";
-    public static final String PAYMENT_STATUS_EXCHANGE = "payment.events.exchange";
+    public static final String ORDER_CREATED_ROUTING_KEY = "order.created";
+
+    public static final String PAYMENT_EVENTS_EXCHANGE = "payment.events.exchange";
     public static final String ORDER_STATUS_QUEUE = "order.status.queue";
+    public static final String PAYMENT_STATUS_ROUTING_PATTERN = "payment.status.#";
 
     @Bean
     public Exchange orderExchange() {
@@ -20,7 +22,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Exchange paymentStatusExchange() {
-        return new FanoutExchange(PAYMENT_STATUS_EXCHANGE);
+        return new TopicExchange(PAYMENT_EVENTS_EXCHANGE);
     }
 
     @Bean
@@ -29,10 +31,11 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Binding bindingOrderQueueToPaymentEvents(Queue orderStatusQueue, FanoutExchange paymentStatusExchange) {
+    public Binding bindingOrderQueueToPaymentEvents(Queue orderStatusQueue, TopicExchange paymentStatusExchange) {
         return BindingBuilder
                 .bind(orderStatusQueue)
-                .to(paymentStatusExchange);
+                .to(paymentStatusExchange)
+                .with(PAYMENT_STATUS_ROUTING_PATTERN);
     }
 
     @Bean
