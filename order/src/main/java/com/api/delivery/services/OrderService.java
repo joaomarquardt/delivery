@@ -54,7 +54,11 @@ public class OrderService {
         List<OrderItem> items = new ArrayList<>();
         for (OrderItemRequest itemRequest : request.items()) {
             Product product = productService.findProductEntityById(itemRequest.productId());
-            totalValue = totalValue.add(product.getPrice());
+            if (product == null) {
+                throw new EntityNotFoundException("Product not found with ID: " + itemRequest.productId());
+            }
+            BigDecimal totalItemValue = product.getPrice().multiply(BigDecimal.valueOf(itemRequest.amount()));
+            totalValue = totalValue.add(totalItemValue);
             OrderItem orderItem = new OrderItem();
             orderItem.setAmount(itemRequest.amount());
             orderItem.setProduct(product);
