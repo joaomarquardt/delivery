@@ -92,12 +92,29 @@ public class OrderService {
 
     public OrderResponse updateOrderStatus(Long id, UpdateOrderStatusRequest request) {
         Order order = findOrderEntityById(id);
+        validateOrderStatusUpdate(order.getStatus(), request.orderStatus());
         order.setStatus(request.orderStatus());
         Order createdOrder = orderRepository.save(order);
         return orderMapper.toOrderResponse(createdOrder);
     }
 
-    public void deleteOrder(Long id) {
-        orderRepository.deleteById(id);
+    private void validateOrderStatusUpdate(OrderStatus currentStatus, OrderStatus newStatus) {
+        if (currentStatus == newStatus) return;
+        if (currentStatus == OrderStatus.DELIVERED || currentStatus == OrderStatus.CANCELED) {
+            throw new RuntimeException("Cannot change status of a delivered or canceled order.");
+        }
+        if (currentStatus == OrderStatus.PENDING && newStatus != OrderStatus.PREPARING && newStatus != OrderStatus.CANCELED) {
+            throw new RuntimeException("Pending orders can only transition to CANCELED, or PREPARING.");
+        }
+        if (currentStatus == OrderStatus.PAID && newStatus != OrderStatus.PREPARING && newStatus != OrderStatus.DELIVERED) {
+            throw new RuntimeException("Paid orders must transition to PREPARING or DELIVERED.");
+        }
+        if (currentStatus == OrderStatus.PREPARING && newStatus != OrderStatus.OUT_FOR_DELIVERY) {
+            throw new RuntimeException("Orders in preparation must transition to OUT_FOR_DELIVERY.");
+        }
+        if (currentStatus == OrderStatus.OUT_FOR_DELIVERY && newStatus != OrderStatus.DELIVERED && newStatus != OrderStatus.PAID) {
+            throw new RuntimeException("Orders out for delivery must transition to PAID or DELIVERED.");
+        }
+
     }
 }
