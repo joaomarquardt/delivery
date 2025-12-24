@@ -1,4 +1,4 @@
-package com.api.delivery.dtos.requests;
+package com.api.delivery.messaging.dtos;
 
 import java.math.BigDecimal;
 
