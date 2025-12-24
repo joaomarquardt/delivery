@@ -3,7 +3,9 @@ package com.delivery.payment.messaging.producer;
 import com.delivery.payment.config.RabbitMQConfig;
 import com.delivery.payment.dtos.PaymentStatusMessage;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PaymentProducer {
     private final RabbitTemplate rabbitTemplate;
 
@@ -12,8 +14,9 @@ public class PaymentProducer {
     }
 
     public void sendPaymentStatusMessage(Long orderId, boolean success) {
-        rabbitTemplate.convertAndSend(RabbitMQConfig.PAYMENT_STATUS_EXCHANGE,
-                RabbitMQConfig.ROUTING_KEY,
+        String statusKey = success ? "payment.status.approved" : "payment.status.failed";
+        rabbitTemplate.convertAndSend(RabbitMQConfig.PAYMENT_EVENTS_EXCHANGE,
+                statusKey,
                 new PaymentStatusMessage(orderId, success));
     }
 }

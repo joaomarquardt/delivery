@@ -1,5 +1,6 @@
 package com.delivery.payment.messaging.listener;
 
+import com.delivery.payment.config.RabbitMQConfig;
 import com.delivery.payment.dtos.PaymentMessage;
 import com.delivery.payment.dtos.PaymentRequest;
 import com.delivery.payment.services.PaymentService;
@@ -14,7 +15,7 @@ public class PaymentListener {
         this.paymentService = paymentService;
     }
 
-    @RabbitListener(queues = {"order.created.queue"})
+    @RabbitListener(queues = RabbitMQConfig.ORDER_CREATED_QUEUE)
     public void createOrderPayment(PaymentMessage message) {
         PaymentRequest paymentRequest = new PaymentRequest(
                 message.orderId(),
