@@ -18,7 +18,7 @@ public class OrderListener {
 
     @RabbitListener(queues = RabbitMQConfig.ORDER_STATUS_QUEUE)
     public void handleOrderStatusUpdate(PaymentStatusMessage message) {
-        OrderStatus orderStatus = message.success() ? OrderStatus.PREPARING : OrderStatus.CANCELED;
+        OrderStatus orderStatus = message.success() ? OrderStatus.PAID : OrderStatus.CANCELED;
         UpdateOrderStatusRequest request = new UpdateOrderStatusRequest(orderStatus);
         orderService.updateOrderStatus(message.orderId(), request);
     }
