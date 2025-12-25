@@ -1,4 +1,4 @@
-package com.api.delivery.domain;
+package com.delivery.auth.domain;
 
 import jakarta.persistence.*;
 

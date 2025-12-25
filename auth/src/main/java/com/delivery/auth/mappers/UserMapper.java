@@ -1,9 +1,9 @@
-package com.api.delivery.mappers;
+package com.delivery.auth.mappers;
 
-import com.api.delivery.domain.User;
-import com.api.delivery.dtos.requests.CreateUserRequest;
-import com.api.delivery.dtos.requests.UpdateUserRequest;
-import com.api.delivery.dtos.responses.UserResponse;
+import com.delivery.auth.domain.User;
+import com.delivery.auth.dtos.requests.CreateUserRequest;
+import com.delivery.auth.dtos.requests.UpdateUserRequest;
+import com.delivery.auth.dtos.responses.UserResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

@@ -1,11 +1,11 @@
-package com.api.delivery.services;
+package com.delivery.auth.services;
 
-import com.api.delivery.domain.User;
-import com.api.delivery.dtos.requests.CreateUserRequest;
-import com.api.delivery.dtos.requests.UpdateUserRequest;
-import com.api.delivery.dtos.responses.UserResponse;
-import com.api.delivery.mappers.UserMapper;
-import com.api.delivery.repositories.UserRepository;
+import com.delivery.auth.domain.User;
+import com.delivery.auth.dtos.requests.CreateUserRequest;
+import com.delivery.auth.dtos.requests.UpdateUserRequest;
+import com.delivery.auth.dtos.responses.UserResponse;
+import com.delivery.auth.mappers.UserMapper;
+import com.delivery.auth.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 

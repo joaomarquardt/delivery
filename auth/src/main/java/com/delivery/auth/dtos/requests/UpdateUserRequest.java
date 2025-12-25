@@ -1,4 +1,4 @@
-package com.api.delivery.dtos.requests;
+package com.delivery.auth.dtos.requests;
 
 public record UpdateUserRequest(
         String name,
