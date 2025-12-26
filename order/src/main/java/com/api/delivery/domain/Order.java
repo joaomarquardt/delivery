@@ -19,20 +19,19 @@ public class Order {
     private BigDecimal totalValue;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items;
-    @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Long userId;
 
     public Order() {
     }
 
-    public Order(Long id, Timestamp orderedOn, OrderStatus status, BigDecimal totalValue, List<OrderItem> items, User user) {
+    public Order(Long id, Timestamp orderedOn, OrderStatus status, BigDecimal totalValue, List<OrderItem> items, Long userId) {
         this.id = id;
         this.orderedOn = orderedOn;
         this.status = status;
         this.totalValue = totalValue;
         this.items = items;
-        this.user = user;
+        this.userId = userId;
     }
 
     public Long getId() {
@@ -75,11 +74,11 @@ public class Order {
         this.items = items;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

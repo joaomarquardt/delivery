@@ -1,9 +1,9 @@
-package com.api.delivery.controllers;
+package com.delivery.auth.controllers;
 
-import com.api.delivery.dtos.requests.CreateUserRequest;
-import com.api.delivery.dtos.requests.UpdateUserRequest;
-import com.api.delivery.dtos.responses.UserResponse;
-import com.api.delivery.services.UserService;
+import com.delivery.auth.dtos.requests.CreateUserRequest;
+import com.delivery.auth.dtos.requests.UpdateUserRequest;
+import com.delivery.auth.dtos.responses.UserResponse;
+import com.delivery.auth.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

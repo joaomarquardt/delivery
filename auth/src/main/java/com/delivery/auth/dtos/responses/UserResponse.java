@@ -1,4 +1,4 @@
-package com.api.delivery.dtos.responses;
+package com.delivery.auth.dtos.responses;
 
 public record UserResponse(
         Long id,
