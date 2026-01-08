@@ -57,7 +57,6 @@ public class AuthenticationService {
         if (token == null || token.isBlank()) {
             throw new IllegalArgumentException("Invalid token");
         }
-        String cleanToken = token.replace("Bearer ", "");
-        tokenCacheService.invalidateToken(cleanToken);
+        tokenCacheService.invalidateToken(token);
     }
 }

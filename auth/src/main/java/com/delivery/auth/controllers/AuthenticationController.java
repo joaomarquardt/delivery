@@ -30,7 +30,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<Void> logout(@RequestHeader("X-Token-Original") String token) {
         authenticationService.logout(token);
         return new ResponseEntity<>(HttpStatus.OK);
     }
