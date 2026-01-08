@@ -19,10 +19,6 @@ public class TokenCacheService {
         redisTemplate.opsForValue().set(token, "VALID", Duration.ofSeconds(expirationInSeconds));
     }
 
-    public boolean isTokenValid(String token) {
-        return "VALID".equals(redisTemplate.opsForValue().get(token));
-    }
-
     public void invalidateToken(String token) {
         redisTemplate.delete(token);
     }

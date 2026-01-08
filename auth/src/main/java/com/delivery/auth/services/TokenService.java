@@ -31,22 +31,4 @@ public class TokenService {
             throw new JWTCreationException("Error while generating token", e);
         }
     }
-
-    public String validateToken(String token) {
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            return JWT.require(algorithm)
-                    .withIssuer("auth")
-                    .build()
-                    .verify(token)
-                    .getSubject();
-        } catch (JWTVerificationException e) {
-            return "";
-        }
-    }
-
-    public Instant getExpiration(String token) {
-        return JWT.decode(token)
-                .getExpiresAtAsInstant();
-    }
 }
