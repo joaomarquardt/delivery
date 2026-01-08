@@ -19,11 +19,12 @@ public class UserHeaderFilter implements GlobalFilter {
                     Jwt jwt = authentication.getToken();
                     String userId = jwt.getClaimAsString("idUser");
                     String userRole = jwt.getClaimAsString("roles");
+                    String token = jwt.getTokenValue();
                     ServerHttpRequest request = exchange.getRequest().mutate()
                             .header("X-User-Id", userId)
                             .header("X-User-Role", userRole)
+                            .header("X-Token-Original", token)
                             .build();
-
                     return exchange.mutate().request(request).build();
                 })
                 .defaultIfEmpty(exchange)
