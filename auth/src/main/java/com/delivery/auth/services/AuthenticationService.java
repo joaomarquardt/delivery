@@ -8,14 +8,11 @@ import com.delivery.auth.dtos.responses.TokenResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthenticationService implements UserDetailsService {
+public class AuthenticationService {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -48,8 +45,11 @@ public class AuthenticationService implements UserDetailsService {
         if (!registerRequest.password().equals(registerRequest.passwordConfirmation())) {
             throw new IllegalArgumentException("Passwords do not match");
         }
+        if (userService.existsUserByEmail(registerRequest.email())) {
+            throw new IllegalArgumentException("Email already in use");
+        }
         String encryptedPassword = passwordEncoder.encode(registerRequest.password());
-        CreateUserRequest createUser = new CreateUserRequest(registerRequest.name(), registerRequest.email(), encryptedPassword);
+        CreateUserRequest createUser = new CreateUserRequest(registerRequest.name(), registerRequest.email(), encryptedPassword, registerRequest.userRole());
         userService.createUser(createUser);
     }
 
@@ -59,11 +59,5 @@ public class AuthenticationService implements UserDetailsService {
         }
         String cleanToken = token.replace("Bearer ", "");
         tokenCacheService.invalidateToken(cleanToken);
-    }
-
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userService.findUserEntityByEmail(email);
     }
 }

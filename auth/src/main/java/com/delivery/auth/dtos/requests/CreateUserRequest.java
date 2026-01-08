@@ -1,8 +1,11 @@
 package com.delivery.auth.dtos.requests;
 
+import com.delivery.auth.enums.UserRole;
+
 public record CreateUserRequest(
         String name,
         String email,
-        String password
+        String password,
+        UserRole userRole
 ) {
 }

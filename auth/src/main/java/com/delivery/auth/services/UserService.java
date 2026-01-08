@@ -34,6 +34,10 @@ public class UserService {
         return userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
     }
 
+    public boolean existsUserByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
     public UserResponse findUserById(Long id) {
         User user = findUserEntityById(id);
         return userMapper.toUserResponse(user);
