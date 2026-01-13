@@ -11,6 +11,61 @@ services:
       RABBITMQ_DEFAULT_PASS: password
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - delivery-network
+
+  auth-service:
+    build: ./auth
+    container_name: auth-service
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    networks:
+      - delivery-network
+
+  order-service:
+    build: ./order
+    container_name: order-service
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    depends_on:
+      - rabbitmq
+    networks:
+      - delivery-network
+
+  payment-service:
+    build: ./payment
+    container_name: payment-service
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    depends_on:
+      - rabbitmq
+    networks:
+      - delivery-network
+
+  gateway:
+    build: ./gateway
+    container_name: gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - order-service
+      - payment-service
+    networks:
+      - delivery-network
+
+networks:
+  delivery-network:
+    driver: bridge
 
 volumes:
   rabbitmq_data:
