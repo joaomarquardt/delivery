@@ -14,7 +14,7 @@ spring:
         - id: auth-service-route
           uri: http://auth-service:8081
           predicates:
-            - Path=/api/auth/**
+            - Path=/api/auth/**, /api/users/**
         - id: order-service-route
           uri: http://order-service:8082
           predicates:
