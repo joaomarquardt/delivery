@@ -7,7 +7,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          secret-key: "secret"
+          secret-key: "chave_grande_e_muito_segura_para_testes"
   cloud:
     gateway:
       routes:

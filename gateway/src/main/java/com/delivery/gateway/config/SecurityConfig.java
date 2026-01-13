@@ -1,5 +1,6 @@
 package com.delivery.gateway.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -14,6 +15,8 @@ import javax.crypto.spec.SecretKeySpec;
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
+    @Value("${spring.security.oauth2.resourceserver.jwt.secret-key}")
+    private String secret;
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
@@ -30,7 +33,7 @@ public class SecurityConfig {
 
     @Bean
     public ReactiveJwtDecoder jwtDecoder() {
-        byte[] secretBytes = "secret".getBytes();
+        byte[] secretBytes = secret.getBytes();
         SecretKeySpec secretKey = new SecretKeySpec(secretBytes, "HmacSHA256");
         return NimbusReactiveJwtDecoder.withSecretKey(secretKey).build();
     }
