@@ -5,6 +5,10 @@ import com.delivery.auth.dtos.requests.CreateUserRequest;
 import com.delivery.auth.dtos.requests.LoginRequest;
 import com.delivery.auth.dtos.requests.RegisterRequest;
 import com.delivery.auth.dtos.responses.TokenResponse;
+import com.delivery.auth.infra.exceptions.AuthenticationFailedException;
+import com.delivery.auth.infra.exceptions.DifferentPasswordsException;
+import com.delivery.auth.infra.exceptions.EmailAlreadyExistsException;
+import com.delivery.auth.infra.exceptions.InvalidTokenException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,16 +41,16 @@ public class AuthenticationService {
             String token = tokenService.generateToken(userAuth);
             return new TokenResponse(token);
         } catch (BadCredentialsException e) {
-            throw new IllegalArgumentException("Invalid email or password");
+            throw new AuthenticationFailedException("Invalid email or password");
         }
     }
 
     public void register(RegisterRequest registerRequest) {
         if (!registerRequest.password().equals(registerRequest.passwordConfirmation())) {
-            throw new IllegalArgumentException("Passwords do not match");
+            throw new DifferentPasswordsException("Passwords do not match");
         }
         if (userService.existsUserByEmail(registerRequest.email())) {
-            throw new IllegalArgumentException("Email already in use");
+            throw new EmailAlreadyExistsException("Email already in use");
         }
         String encryptedPassword = passwordEncoder.encode(registerRequest.password());
         CreateUserRequest createUser = new CreateUserRequest(registerRequest.name(), registerRequest.email(), encryptedPassword, registerRequest.userRole());
@@ -55,7 +59,7 @@ public class AuthenticationService {
 
     public void logout(String token) {
         if (token == null || token.isBlank()) {
-            throw new IllegalArgumentException("Invalid token");
+            throw new InvalidTokenException("Invalid token");
         }
         tokenCacheService.invalidateToken(token);
     }

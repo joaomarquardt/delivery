@@ -5,6 +5,7 @@ import com.api.delivery.domain.ProductType;
 import com.api.delivery.dtos.requests.CreateProductRequest;
 import com.api.delivery.dtos.requests.UpdateProductRequest;
 import com.api.delivery.dtos.responses.ProductResponse;
+import com.api.delivery.infra.exceptions.ProductAlreadyExistsException;
 import com.api.delivery.mappers.ProductMapper;
 import com.api.delivery.repositories.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -45,7 +46,7 @@ public class ProductService {
     public ProductResponse createProduct(CreateProductRequest request) {
         ProductType productType = productTypeService.findProductTypeEntityById(request.productTypeId());
         if (existsByName(request.name())) {
-            throw new IllegalArgumentException("Product with name '" + request.name() + "' already exists!");
+            throw new ProductAlreadyExistsException("Product with name '" + request.name() + "' already exists!");
         }
         Product product = productMapper.toProductEntity(request);
         product.setProductType(productType);
@@ -56,7 +57,7 @@ public class ProductService {
     public ProductResponse updateProduct(Long id, UpdateProductRequest request) {
         ProductType productType = productTypeService.findProductTypeEntityById(request.productTypeId());
         if (productRepository.existsByNameAndIdNot(request.name(), id)) {
-            throw new IllegalArgumentException("Product with name '" + request.name() + "' already exists!");
+            throw new ProductAlreadyExistsException("Product with name '" + request.name() + "' already exists!");
         }
         Product product = findProductEntityById(id);
         productMapper.updateProductFromRequest(request, product);

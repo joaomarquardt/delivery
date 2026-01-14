@@ -7,6 +7,8 @@ import com.api.delivery.domain.Product;
 import com.api.delivery.dtos.requests.OrderItemRequest;
 import com.api.delivery.dtos.requests.CreateOrderRequest;
 import com.api.delivery.enums.PaymentChannel;
+import com.api.delivery.infra.exceptions.InvalidOrderStatusTransitionExceptio;
+import com.api.delivery.infra.exceptions.InvalidPaymentDetailsException;
 import com.api.delivery.messaging.dtos.OrderPaymentMessage;
 import com.api.delivery.dtos.requests.UpdateOrderStatusRequest;
 import com.api.delivery.dtos.responses.OrderResponse;
@@ -14,6 +16,7 @@ import com.api.delivery.mappers.OrderMapper;
 import com.api.delivery.messaging.producers.OrderProducer;
 import com.api.delivery.repositories.OrderRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -54,14 +57,14 @@ public class OrderService {
     public OrderResponse findOrderById(Long id, Long userId, String userRole) {
         Order order = findOrderEntityById(id);
         if (!userRole.equals("ADMIN") && !order.getUserId().equals(userId)) {
-            throw new IllegalArgumentException("You do not have permission to access this order");
+            throw new AccessDeniedException("You do not have permission to access this order");
         }
         return orderMapper.toOrderResponse(order);
     }
 
     public OrderResponse createOrder(CreateOrderRequest request) {
         if (request.paymentChannel() == PaymentChannel.ONLINE && (request.cardToken() == null || request.cardToken().isBlank())) {
-            throw new IllegalArgumentException("Card token is required for online card payments");
+            throw new InvalidPaymentDetailsException("Card token is required for online card payments");
         }
         BigDecimal totalValue = BigDecimal.valueOf(0);
         List<OrderItem> items = new ArrayList<>();
@@ -110,19 +113,19 @@ public class OrderService {
     private void validateOrderStatusUpdate(OrderStatus currentStatus, OrderStatus newStatus) {
         if (currentStatus == newStatus) return;
         if (currentStatus == OrderStatus.DELIVERED || currentStatus == OrderStatus.CANCELED) {
-            throw new RuntimeException("Cannot change status of a delivered or canceled order.");
+            throw new InvalidOrderStatusTransitionExceptio("Cannot change status of a delivered or canceled order.");
         }
         if (currentStatus == OrderStatus.PENDING && newStatus != OrderStatus.PREPARING && newStatus != OrderStatus.CANCELED) {
-            throw new RuntimeException("Pending orders can only transition to CANCELED, or PREPARING.");
+            throw new InvalidOrderStatusTransitionExceptio("Pending orders can only transition to CANCELED, or PREPARING.");
         }
         if (currentStatus == OrderStatus.PAID && newStatus != OrderStatus.PREPARING && newStatus != OrderStatus.DELIVERED) {
-            throw new RuntimeException("Paid orders must transition to PREPARING or DELIVERED.");
+            throw new InvalidOrderStatusTransitionExceptio("Paid orders must transition to PREPARING or DELIVERED.");
         }
         if (currentStatus == OrderStatus.PREPARING && newStatus != OrderStatus.OUT_FOR_DELIVERY) {
-            throw new RuntimeException("Orders in preparation must transition to OUT_FOR_DELIVERY.");
+            throw new InvalidOrderStatusTransitionExceptio("Orders in preparation must transition to OUT_FOR_DELIVERY.");
         }
         if (currentStatus == OrderStatus.OUT_FOR_DELIVERY && newStatus != OrderStatus.DELIVERED && newStatus != OrderStatus.PAID) {
-            throw new RuntimeException("Orders out for delivery must transition to PAID or DELIVERED.");
+            throw new InvalidOrderStatusTransitionExceptio("Orders out for delivery must transition to PAID or DELIVERED.");
         }
 
     }

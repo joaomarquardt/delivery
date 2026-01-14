@@ -6,8 +6,10 @@ import com.delivery.payment.enums.PaymentStatus;
 import com.delivery.payment.dtos.PaymentRequest;
 import com.delivery.payment.enums.PaymentChannel;
 import com.delivery.payment.gateways.ExternalPaymentGateway;
+import com.delivery.payment.infra.exceptions.IncompatiblePaymentMethodException;
 import com.delivery.payment.infra.exceptions.InvalidPaymentChannelException;
 import com.delivery.payment.infra.exceptions.InvalidPaymentMethodException;
+import com.delivery.payment.infra.exceptions.PaymentAlreadyProcessedException;
 import com.delivery.payment.messaging.producer.PaymentProducer;
 import com.delivery.payment.repositories.PaymentRepository;
 import org.springframework.stereotype.Service;
@@ -47,7 +49,7 @@ public class PaymentService {
     public void processAtDeliveryPayment(Long orderId) {
         Payment payment = paymentRepository.findByOrderId(orderId).orElseThrow(() -> new IllegalArgumentException("Payment not found for order ID: " + orderId));
         if (payment.getStatus() != PaymentStatus.PENDING) {
-            throw new IllegalArgumentException("Payment is not in a pending state for order ID: " + orderId);
+            throw new PaymentAlreadyProcessedException("Payment is not in a pending state for order ID: " + orderId);
         }
         payment.setStatus(PaymentStatus.APPROVED);
         paymentRepository.save(payment);
@@ -62,13 +64,13 @@ public class PaymentService {
             throw new InvalidPaymentChannelException("Payment channel is required");
         }
         if (paymentRequest.paymentMethod() == PaymentMethod.CASH && paymentRequest.paymentChannel() == PaymentChannel.ONLINE) {
-            throw new IllegalArgumentException("Cash payments cannot be processed online");
+            throw new IncompatiblePaymentMethodException("Cash payments cannot be processed online");
         }
         boolean isCard = paymentRequest.paymentMethod() == PaymentMethod.CREDIT_CARD || paymentRequest.paymentMethod() == PaymentMethod.DEBIT_CARD;
         boolean isOnline = paymentRequest.paymentChannel() == PaymentChannel.ONLINE;
         if (isCard && isOnline) {
             if (paymentRequest.cardToken() == null || paymentRequest.cardToken().isEmpty()) {
-                throw new IllegalArgumentException("Card data is required for online card payments");
+                throw new IncompatiblePaymentMethodException("Card data is required for online card payments");
             }
         }
     }
