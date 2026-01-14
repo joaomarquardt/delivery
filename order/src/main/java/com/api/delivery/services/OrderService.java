@@ -36,8 +36,14 @@ public class OrderService {
         this.orderProducer = orderProducer;
     }
 
-    public List<OrderResponse> findAll() {
-        List<Order> orders = orderRepository.findAll();
+
+    public List<OrderResponse> findAll(Long userId, String userRole) {
+        List<Order> orders;
+        if (userRole.equals("ADMIN")) {
+            orders = orderRepository.findAll();
+        } else {
+            orders = orderRepository.findAllByUserId(userId);
+        }
         return orderMapper.toOrderResponseList(orders);
     }
 
@@ -45,8 +51,11 @@ public class OrderService {
         return orderRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Order not found with ID: " + id));
     }
 
-    public OrderResponse findOrderById(Long id) {
+    public OrderResponse findOrderById(Long id, Long userId, String userRole) {
         Order order = findOrderEntityById(id);
+        if (userRole.equals("CUSTOMER") && (order.getUserId().equals(userId))) {
+            throw new IllegalArgumentException("You do not have permission to access this order");
+        }
         return orderMapper.toOrderResponse(order);
     }
 

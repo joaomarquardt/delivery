@@ -20,14 +20,14 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderResponse>> findAll() {
-        List<OrderResponse> orders = orderService.findAll();
+    public ResponseEntity<List<OrderResponse>> findAll(@RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Role") String userRole) {
+        List<OrderResponse> orders = orderService.findAll(userId, userRole);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrderResponse> findOrderById(@PathVariable(value = "id") Long id) {
-        OrderResponse order = orderService.findOrderById(id);
+    public ResponseEntity<OrderResponse> findOrderById(@PathVariable(value = "id") Long id, @RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Role") String userRole) {
+        OrderResponse order = orderService.findOrderById(id, userId, userRole);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
