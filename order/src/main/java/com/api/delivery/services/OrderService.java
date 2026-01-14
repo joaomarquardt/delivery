@@ -53,7 +53,7 @@ public class OrderService {
 
     public OrderResponse findOrderById(Long id, Long userId, String userRole) {
         Order order = findOrderEntityById(id);
-        if (userRole.equals("CUSTOMER") && (order.getUserId().equals(userId))) {
+        if (!userRole.equals("ADMIN") && !order.getUserId().equals(userId)) {
             throw new IllegalArgumentException("You do not have permission to access this order");
         }
         return orderMapper.toOrderResponse(order);
