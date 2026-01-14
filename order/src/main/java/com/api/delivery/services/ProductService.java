@@ -55,7 +55,7 @@ public class ProductService {
 
     public ProductResponse updateProduct(Long id, UpdateProductRequest request) {
         ProductType productType = productTypeService.findProductTypeEntityById(request.productTypeId());
-        if (existsByName(request.name())) {
+        if (productRepository.existsByNameAndIdNot(request.name(), id)) {
             throw new IllegalArgumentException("Product with name '" + request.name() + "' already exists!");
         }
         Product product = findProductEntityById(id);
