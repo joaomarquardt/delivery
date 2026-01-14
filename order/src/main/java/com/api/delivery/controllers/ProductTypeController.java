@@ -34,7 +34,7 @@ public class ProductTypeController {
     @PostMapping
     public ResponseEntity<ProductTypeResponse> createProductType(@RequestBody CreateProductTypeRequest productType) {
         ProductTypeResponse createdProductType = productTypeService.createProductType(productType);
-        return new ResponseEntity<>(createdProductType, HttpStatus.OK);
+        return new ResponseEntity<>(createdProductType, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
