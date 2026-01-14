@@ -31,7 +31,8 @@ public class SecurityFilter extends OncePerRequestFilter {
         String userId = request.getHeader("X-User-Id");
         String userRole = request.getHeader("X-User-Role");
         if (userId != null && userRole != null) {
-            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(userRole));
+            String roleWithPrefix = userRole.startsWith("ROLE_") ? userRole : "ROLE_" + userRole;
+            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(roleWithPrefix));
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                     userId, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(auth);

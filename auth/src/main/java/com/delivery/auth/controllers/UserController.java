@@ -26,8 +26,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> findUserById(@PathVariable(value = "id") Long id) {
-        UserResponse user = userService.findUserById(id);
+    public ResponseEntity<UserResponse> findUserById(@PathVariable(value = "id") Long id, @RequestHeader("X-User-Id") Long authenticatedUserId, @RequestHeader("X-User-Role") String userRole) {
+        UserResponse user = userService.findUserById(id, authenticatedUserId, userRole);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -38,14 +38,14 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable(value = "id") Long id, @RequestBody UpdateUserRequest user) {
-        UserResponse updatedUser = userService.updateUser(id, user);
+    public ResponseEntity<UserResponse> updateUser(@PathVariable(value = "id") Long id, @RequestBody UpdateUserRequest user, @RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Role") String userRole) {
+        UserResponse updatedUser = userService.updateUser(id, user, userId, userRole);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable(value = "id") Long id) {
-        userService.deleteUser(id);
+    public ResponseEntity<Void> deleteUser(@PathVariable(value = "id") Long id, @RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Role") String userRole) {
+        userService.deleteUser(id, userId, userRole);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

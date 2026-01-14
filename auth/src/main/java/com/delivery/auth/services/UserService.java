@@ -8,6 +8,7 @@ import com.delivery.auth.mappers.UserMapper;
 import com.delivery.auth.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 
@@ -38,8 +39,11 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
-    public UserResponse findUserById(Long id) {
+    public UserResponse findUserById(Long id, Long authenticatedUserId, String userRole) {
         User user = findUserEntityById(id);
+        if (!userRole.equals("ADMIN") && !user.getId().equals(authenticatedUserId)) {
+            throw new IllegalArgumentException("You do not have permission to access this user");
+        }
         return userMapper.toUserResponse(user);
     }
 
@@ -49,14 +53,21 @@ public class UserService {
         return userMapper.toUserResponse(createdUser);
     }
 
-    public UserResponse updateUser(Long id, UpdateUserRequest request) {
+    public UserResponse updateUser(Long id, UpdateUserRequest request, Long userId, String userRole) {
         User user = findUserEntityById(id);
+        if (!userRole.equals("ADMIN") && !user.getId().equals(userId)) {
+            throw new IllegalArgumentException("You do not have permission to update this user");
+        }
         userMapper.updateUserFromRequest(request, user);
         User createdUser = userRepository.save(user);
         return userMapper.toUserResponse(createdUser);
     }
 
-    public void deleteUser(Long id) {
+    public void deleteUser(Long id, Long userId, String userRole) {
+        User user = findUserEntityById(id);
+        if (!userRole.equals("ADMIN") && !user.getId().equals(userId)) {
+            throw new IllegalArgumentException("You do not have permission to delete this user");
+        }
         userRepository.deleteById(id);
     }
 }
