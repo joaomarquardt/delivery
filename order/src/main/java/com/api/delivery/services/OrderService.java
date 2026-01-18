@@ -116,8 +116,8 @@ public class OrderService {
         if (currentStatus == OrderStatus.DELIVERED || currentStatus == OrderStatus.CANCELED) {
             throw new InvalidOrderStatusTransitionException("Cannot change status of a delivered or canceled order.");
         }
-        if (currentStatus == OrderStatus.PENDING && newStatus != OrderStatus.PREPARING && newStatus != OrderStatus.CANCELED) {
-            throw new InvalidOrderStatusTransitionException("Pending orders can only transition to CANCELED, or PREPARING.");
+        if (currentStatus == OrderStatus.PENDING && newStatus != OrderStatus.PREPARING && newStatus != OrderStatus.CANCELED && newStatus != OrderStatus.PAID) {
+            throw new InvalidOrderStatusTransitionException("Pending orders can only transition to CANCELED, PREPARING or PAID.");
         }
         if (currentStatus == OrderStatus.PAID && newStatus != OrderStatus.PREPARING && newStatus != OrderStatus.DELIVERED) {
             throw new InvalidOrderStatusTransitionException("Paid orders must transition to PREPARING or DELIVERED.");
