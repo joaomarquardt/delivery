@@ -15,6 +15,26 @@ public class RabbitMQConfig {
     public static final String ORDER_STATUS_QUEUE = "order.status.queue";
     public static final String PAYMENT_STATUS_ROUTING_PATTERN = "payment.status.#";
 
+    public static final String PAYMENT_ERROR_EXCHANGE = "payment.events.dlx";
+    public static final String PAYMENT_ERROR_QUEUE = "payment.status.dlq";
+
+    @Bean
+    public TopicExchange paymentDeadLetterExchange() {
+        return new TopicExchange(PAYMENT_ERROR_EXCHANGE);
+    }
+
+    @Bean
+    public Queue paymentDeadLetterQueue() {
+        return new Queue(PAYMENT_ERROR_QUEUE);
+    }
+
+    @Bean
+    public Binding bindingDLQ(Queue paymentDeadLetterQueue, TopicExchange paymentDeadLetterExchange) {
+        return BindingBuilder.bind(paymentDeadLetterQueue)
+                .to(paymentDeadLetterExchange)
+                .with("payment.status.#");
+    }
+
     @Bean
     public Exchange orderExchange() {
         return new DirectExchange(ORDER_EXCHANGE);
@@ -27,7 +47,10 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue orderStatusQueue() {
-        return new Queue(ORDER_STATUS_QUEUE);
+        return QueueBuilder.durable(ORDER_STATUS_QUEUE)
+                .withArgument("x-dead-letter-exchange", PAYMENT_ERROR_EXCHANGE)
+                .withArgument("x-dead-letter-routing-key", "payment.status.dead")
+                .build();
     }
 
     @Bean
