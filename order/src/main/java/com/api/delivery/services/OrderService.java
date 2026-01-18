@@ -62,7 +62,7 @@ public class OrderService {
         return orderMapper.toOrderResponse(order);
     }
 
-    public OrderResponse createOrder(CreateOrderRequest request) {
+    public OrderResponse createOrder(CreateOrderRequest request, Long userId) {
         if (request.paymentChannel() == PaymentChannel.ONLINE && (request.cardToken() == null || request.cardToken().isBlank())) {
             throw new InvalidPaymentDetailsException("Card token is required for online card payments");
         }
@@ -84,6 +84,7 @@ public class OrderService {
         Order order = new Order();
         order.setTotalValue(totalValue);
         order.setStatus(OrderStatus.PENDING);
+        order.setUserId(userId);
         order.setOrderedOn(Timestamp.from(Instant.now()));
         for (OrderItem item : items) {
             item.setOrder(order);
