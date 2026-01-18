@@ -25,7 +25,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/api/payments/**/at-delivery").hasAnyRole("DELIVERY_DRIVER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/payments/{id}/at-delivery").hasAnyRole("DELIVERY_DRIVER", "ADMIN")
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
