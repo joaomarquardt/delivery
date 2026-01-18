@@ -36,6 +36,8 @@ public class PaymentService {
         if (paymentRequest.paymentChannel() == PaymentChannel.ONLINE) {
             PaymentStatus status = processOnlinePayment(paymentRequest.orderId(), paymentRequest.value(), paymentRequest.paymentMethod(), paymentRequest.cardToken());
             payment.setStatus(status);
+        } else {
+            payment.setStatus(PaymentStatus.PENDING);
         }
         paymentRepository.save(payment);
     }
