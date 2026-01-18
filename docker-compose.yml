@@ -14,6 +14,48 @@ services:
     networks:
       - delivery-network
 
+  auth-db:
+    image: mysql:8.0
+    container_name: auth-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: auth_db
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - auth_db_data:/var/lib/mysql
+    networks:
+      - delivery-network
+
+  order-db:
+    image: mysql:8.0
+    container_name: order-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: order_db
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - order_db_data:/var/lib/mysql
+    networks:
+      - delivery-network
+
+  payment-db:
+    image: mysql:8.0
+    container_name: payment-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: payment_db
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - payment_db_data:/var/lib/mysql
+    networks:
+      - delivery-network
+
   auth-service:
     build: ./auth
     container_name: auth-service
@@ -74,3 +116,6 @@ networks:
 
 volumes:
   rabbitmq_data:
+  auth_db_data:
+  order_db_data:
+  payment_db_data:
