@@ -10,6 +10,7 @@ public record OrderResponse(
         Long id,
         Long userId,
         Timestamp orderedOn,
+        Timestamp updatedOn,
         OrderStatus status,
         BigDecimal totalValue,
         List<OrderItemResponse> items
