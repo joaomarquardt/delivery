@@ -2,18 +2,23 @@ package com.api.delivery.domain;
 
 import com.api.delivery.enums.OrderStatus;
 import jakarta.persistence.*;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Timestamp orderedOn;
+    @LastModifiedDate
+    private Timestamp updatedOn;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
     private BigDecimal totalValue;
