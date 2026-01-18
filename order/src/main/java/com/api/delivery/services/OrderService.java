@@ -7,7 +7,7 @@ import com.api.delivery.domain.Product;
 import com.api.delivery.dtos.requests.OrderItemRequest;
 import com.api.delivery.dtos.requests.CreateOrderRequest;
 import com.api.delivery.enums.PaymentChannel;
-import com.api.delivery.infra.exceptions.InvalidOrderStatusTransitionExceptio;
+import com.api.delivery.infra.exceptions.InvalidOrderStatusTransitionException;
 import com.api.delivery.infra.exceptions.InvalidPaymentDetailsException;
 import com.api.delivery.messaging.dtos.OrderPaymentMessage;
 import com.api.delivery.dtos.requests.UpdateOrderStatusRequest;
@@ -113,19 +113,19 @@ public class OrderService {
     private void validateOrderStatusUpdate(OrderStatus currentStatus, OrderStatus newStatus) {
         if (currentStatus == newStatus) return;
         if (currentStatus == OrderStatus.DELIVERED || currentStatus == OrderStatus.CANCELED) {
-            throw new InvalidOrderStatusTransitionExceptio("Cannot change status of a delivered or canceled order.");
+            throw new InvalidOrderStatusTransitionException("Cannot change status of a delivered or canceled order.");
         }
         if (currentStatus == OrderStatus.PENDING && newStatus != OrderStatus.PREPARING && newStatus != OrderStatus.CANCELED) {
-            throw new InvalidOrderStatusTransitionExceptio("Pending orders can only transition to CANCELED, or PREPARING.");
+            throw new InvalidOrderStatusTransitionException("Pending orders can only transition to CANCELED, or PREPARING.");
         }
         if (currentStatus == OrderStatus.PAID && newStatus != OrderStatus.PREPARING && newStatus != OrderStatus.DELIVERED) {
-            throw new InvalidOrderStatusTransitionExceptio("Paid orders must transition to PREPARING or DELIVERED.");
+            throw new InvalidOrderStatusTransitionException("Paid orders must transition to PREPARING or DELIVERED.");
         }
         if (currentStatus == OrderStatus.PREPARING && newStatus != OrderStatus.OUT_FOR_DELIVERY) {
-            throw new InvalidOrderStatusTransitionExceptio("Orders in preparation must transition to OUT_FOR_DELIVERY.");
+            throw new InvalidOrderStatusTransitionException("Orders in preparation must transition to OUT_FOR_DELIVERY.");
         }
         if (currentStatus == OrderStatus.OUT_FOR_DELIVERY && newStatus != OrderStatus.DELIVERED && newStatus != OrderStatus.PAID) {
-            throw new InvalidOrderStatusTransitionExceptio("Orders out for delivery must transition to PAID or DELIVERED.");
+            throw new InvalidOrderStatusTransitionException("Orders out for delivery must transition to PAID or DELIVERED.");
         }
 
     }

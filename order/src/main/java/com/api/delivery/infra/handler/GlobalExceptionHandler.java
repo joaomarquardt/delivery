@@ -1,6 +1,6 @@
 package com.api.delivery.infra.handler;
 
-import com.api.delivery.infra.exceptions.InvalidOrderStatusTransitionExceptio;
+import com.api.delivery.infra.exceptions.InvalidOrderStatusTransitionException;
 import com.api.delivery.infra.exceptions.InvalidPaymentDetailsException;
 import com.api.delivery.infra.exceptions.OrderStatusDeniedException;
 import com.api.delivery.infra.exceptions.ProductAlreadyExistsException;
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
-            InvalidOrderStatusTransitionExceptio.class,
+            InvalidOrderStatusTransitionException.class,
             OrderStatusDeniedException.class,
             InvalidPaymentDetailsException.class
     })
