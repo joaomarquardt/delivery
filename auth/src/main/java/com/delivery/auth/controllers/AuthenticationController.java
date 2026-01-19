@@ -34,11 +34,4 @@ public class AuthenticationController {
         authenticationService.logout(token);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    // Implementar depois
-    //@PatchMapping("/updatePassword")
-    //public ResponseEntity<Void> updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
-    //    authenticationService.updatePassword(updatePasswordRequest);
-    //    return new ResponseEntity<>(HttpStatus.OK);
-    //}
 }
