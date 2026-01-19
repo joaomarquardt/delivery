@@ -4,6 +4,7 @@ import com.api.delivery.dtos.requests.CreateOrderRequest;
 import com.api.delivery.dtos.requests.UpdateOrderStatusRequest;
 import com.api.delivery.dtos.responses.OrderResponse;
 import com.api.delivery.services.OrderService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,13 +33,13 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponse> createOrder(@RequestBody CreateOrderRequest order, @RequestHeader("X-User-Id") Long userId) {
+    public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody CreateOrderRequest order, @RequestHeader("X-User-Id") Long userId) {
         OrderResponse createdOrder = orderService.createOrder(order, userId);
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<OrderResponse> updateOrderStatus(@PathVariable(value = "id") Long id, @RequestBody UpdateOrderStatusRequest orderStatus) {
+    public ResponseEntity<OrderResponse> updateOrderStatus(@PathVariable(value = "id") Long id, @Valid @RequestBody UpdateOrderStatusRequest orderStatus) {
         OrderResponse updatedOrder = orderService.updateOrderStatus(id, orderStatus);
         return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
     }

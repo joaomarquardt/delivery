@@ -4,6 +4,7 @@ import com.delivery.auth.dtos.requests.CreateUserRequest;
 import com.delivery.auth.dtos.requests.UpdateUserRequest;
 import com.delivery.auth.dtos.responses.UserResponse;
 import com.delivery.auth.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,13 +33,13 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest user) {
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest user) {
         UserResponse createdUser = userService.createUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable(value = "id") Long id, @RequestBody UpdateUserRequest user, @RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Role") String userRole) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable(value = "id") Long id, @Valid @RequestBody UpdateUserRequest user, @RequestHeader("X-User-Id") Long userId, @RequestHeader("X-User-Role") String userRole) {
         UserResponse updatedUser = userService.updateUser(id, user, userId, userRole);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }

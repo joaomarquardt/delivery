@@ -4,6 +4,7 @@ import com.delivery.auth.dtos.requests.LoginRequest;
 import com.delivery.auth.dtos.requests.RegisterRequest;
 import com.delivery.auth.dtos.responses.TokenResponse;
 import com.delivery.auth.services.AuthenticationService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +19,13 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         TokenResponse token = authenticationService.login(loginRequest);
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest registerRequest) {
         authenticationService.register(registerRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
