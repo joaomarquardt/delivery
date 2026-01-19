@@ -57,6 +57,11 @@ Como o sistema utiliza um API Gateway, todas as requisições devem ser feitas p
 
 ---
 
+## Diagrama da Aplicação
+<img width="1032" height="750" alt="image" src="https://github.com/user-attachments/assets/90c310f6-2741-4e1a-8a49-fb813ba36c86" />
+
+---
+
 ## Como Rodar a Aplicação
 
 Existem duas formas de executar o projeto:
